@@ -1,0 +1,114 @@
+# YouTube API 수익화 프로젝트 .gitignore
+
+# 환경 변수 및 설정 파일
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+config.json
+secrets.json
+
+# API 키 및 인증 정보
+api_keys.json
+credentials.json
+client_secret.json
+oauth_token.json
+*.pem
+*.key
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# 가상환경
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# 로그 파일
+*.log
+logs/*.log
+
+# 임시 파일
+*.tmp
+*.temp
+.cache/
+.temp/
+
+# IDE 설정
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS 파일
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 빌드 결과물
+build/
+dist/
+out/
+.next/
+.nuxt/
+
+# 데이터베이스
+*.db
+*.sqlite
+*.sqlite3
+
+# 테스트 관련
+coverage/
+.nyc_output/
+.coverage
+htmlcov/
+
+# 백업 파일
+*.backup
+*.bak
+
+# 플래그 로그는 추적하지만 민감한 정보 제외
+logs/sensitive/
+
+# YouTube API 관련
+youtube_data/
+downloads/
+temp_videos/

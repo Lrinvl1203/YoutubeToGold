@@ -1,0 +1,30 @@
+{
+  "name": "youtube-api-monetize",
+  "version": "1.0.0",
+  "description": "YouTube API 수익화 분석 도구",
+  "main": "Youtube_Pro_analyzer.html",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "install-browsers": "playwright install",
+    "serve": "http-server . -p 8080 -c-1",
+    "start": "npm run serve"
+  },
+  "keywords": [
+    "youtube",
+    "api",
+    "analytics",
+    "monetization",
+    "playwright",
+    "testing"
+  ],
+  "author": "Claude Code SuperClaude",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "http-server": "^14.1.1"
+  },
+  "dependencies": {}
+}
