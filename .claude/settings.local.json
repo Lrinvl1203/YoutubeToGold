@@ -10,7 +10,8 @@
       "mcp__playwright__browser_console_messages",
       "mcp__playwright__browser_type",
       "mcp__playwright__browser_wait_for",
-      "mcp__playwright__browser_evaluate"
+      "mcp__playwright__browser_evaluate",
+      "Read(P:\\0_지키기\\02_PROJECT\\99_Working/**)"
     ],
     "deny": [],
     "ask": []
