@@ -3267,10 +3267,18 @@
             }
 
             showBenchmarkReport() {
+                console.log('showBenchmarkReport called');
                 const overlay = document.getElementById('benchmark-report-overlay');
                 const body = document.getElementById('benchmark-report-body');
                 const closeBtn = document.getElementById('close-benchmark-report');
-                if (!overlay || !body || !this.benchmarkResults) return;
+                
+                console.log('Elements found:', { overlay: !!overlay, body: !!body, closeBtn: !!closeBtn });
+                console.log('benchmarkResults:', this.benchmarkResults);
+                
+                if (!overlay || !body || !this.benchmarkResults) {
+                    console.log('Missing elements or results, returning early');
+                    return;
+                }
 
                 overlay.style.display = 'flex';
                 if (closeBtn) closeBtn.onclick = () => { overlay.style.display = 'none'; };
@@ -3279,7 +3287,32 @@
                 const topByViews = [...items].sort((a,b) => (parseInt(b.statistics?.viewCount||0) - parseInt(a.statistics?.viewCount||0))).slice(0,5);
                 const topByOutlier = [...items].sort((a,b) => (b.outlierScore||0) - (a.outlierScore||0)).slice(0,5);
 
-                const consulting = this.buildConsultingRecommendations(items);
+                let consulting;
+                try {
+                    console.log('Building consulting recommendations...');
+                    consulting = this.buildConsultingRecommendations(items);
+                    console.log('Consulting recommendations built:', consulting);
+                } catch (error) {
+                    console.error('Error building consulting recommendations:', error);
+                    consulting = {
+                        dataAnalysis: { title: '오류 발생', insights: ['분석 중 오류가 발생했습니다.'], recommendations: [], actionItems: [] },
+                        contentStrategy: { title: '오류 발생', insights: ['분석 중 오류가 발생했습니다.'], recommendations: [], contentIdeas: [] },
+                        seoStrategy: { title: '오류 발생', insights: ['분석 중 오류가 발생했습니다.'], recommendations: [], seoOptimization: {} },
+                        visualStrategy: { title: '오류 발생', insights: ['분석 중 오류가 발생했습니다.'], recommendations: [], thumbnailTemplates: [] },
+                        scriptStrategy: { title: '오류 발생', insights: ['분석 중 오류가 발생했습니다.'], recommendations: [], scriptTemplates: {} },
+                        marketingStrategy: { title: '오류 발생', insights: ['분석 중 오류가 발생했습니다.'], recommendations: [], marketingChannels: [] },
+                        actionPlan: { title: '오류 발생', phases: [], kpis: [] },
+                        strengths: '오류 발생',
+                        weaknesses: '오류 발생',
+                        strategy: '오류 발생',
+                        title: '오류 발생',
+                        description: '오류 발생',
+                        hook: '오류 발생',
+                        script: '오류 발생',
+                        structure: '오류 발생',
+                        thumbnailPrompt: '오류 발생'
+                    };
+                }
 
                 body.innerHTML = `
                     <div class=\"report-grid\">
@@ -3571,10 +3604,12 @@
             }
 
             performAdvancedAnalysis(items) {
-                const views = items.map(v => parseInt(v.statistics?.viewCount||'0')).filter(n=>!isNaN(n));
-                const likes = items.map(v => parseInt(v.statistics?.likeCount||'0')).filter(n=>!isNaN(n));
-                const comments = items.map(v => parseInt(v.statistics?.commentCount||'0')).filter(n=>!isNaN(n));
-                const durations = items.map(v => this.parseDuration(v.contentDetails?.duration||'PT0S')).filter(n=>!isNaN(n));
+                try {
+                    console.log('performAdvancedAnalysis called with items:', items);
+                    const views = items.map(v => parseInt(v.statistics?.viewCount||'0')).filter(n=>!isNaN(n));
+                    const likes = items.map(v => parseInt(v.statistics?.likeCount||'0')).filter(n=>!isNaN(n));
+                    const comments = items.map(v => parseInt(v.statistics?.commentCount||'0')).filter(n=>!isNaN(n));
+                    const durations = items.map(v => parseDuration(v.contentDetails?.duration||'PT0S')).filter(n=>!isNaN(n));
                 
                 const totalViews = views.reduce((a,b)=>a+b,0);
                 const avgViews = views.length ? totalViews/views.length : 0;
@@ -3606,15 +3641,27 @@
                 // 카테고리 분석
                 const categoryAnalysis = this.analyzeCategories(items);
                 
-                return {
-                    basic: { totalViews, avgViews, maxViews, minViews, engagementRate },
-                    advanced: { estimatedCTR, estimatedAVD, retentionCurve },
-                    competitive: competitiveAnalysis,
-                    keywords: keywordAnalysis,
-                    timing: timeAnalysis,
-                    categories: categoryAnalysis,
-                    items: items
-                };
+                    return {
+                        basic: { totalViews, avgViews, maxViews, minViews, engagementRate },
+                        advanced: { estimatedCTR, estimatedAVD, retentionCurve },
+                        competitive: competitiveAnalysis,
+                        keywords: keywordAnalysis,
+                        timing: timeAnalysis,
+                        categories: categoryAnalysis,
+                        items: items
+                    };
+                } catch (error) {
+                    console.error('Error in performAdvancedAnalysis:', error);
+                    return {
+                        basic: { totalViews: 0, avgViews: 0, maxViews: 0, minViews: 0, engagementRate: 0 },
+                        advanced: { estimatedCTR: 0, estimatedAVD: 0, retentionCurve: {} },
+                        competitive: { topCategories: [], topChannels: [], publishFrequency: 'N/A', marketSaturation: '0%' },
+                        keywords: { titleKeywords: [], descriptionKeywords: [], tagKeywords: [], keywordDensity: [], trendingKeywords: [] },
+                        timing: { bestHours: [], bestDays: [], optimalPublishTime: 'N/A' },
+                        categories: {},
+                        items: items
+                    };
+                }
             }
 
             estimateCTR(avgViews, itemCount) {
