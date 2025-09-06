@@ -508,94 +508,6 @@
             box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
         }
 
-        /* 키워드 입력 관련 스타일 */
-        .keyword-input-container {
-            width: 100%;
-        }
-
-        .keyword-input-wrapper {
-            display: flex;
-            gap: var(--space-sm);
-            align-items: center;
-        }
-
-        .keyword-input {
-            flex: 1;
-        }
-
-        .add-keyword-btn {
-            padding: var(--space-md);
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            color: white;
-            border: none;
-            border-radius: var(--radius-md);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all var(--transition);
-            white-space: nowrap;
-        }
-
-        .add-keyword-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
-        }
-
-        .keywords-display {
-            margin-top: var(--space-md);
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--space-sm);
-            min-height: 40px;
-            padding: var(--space-sm);
-            border: 1px dashed rgba(255, 255, 255, 0.2);
-            border-radius: var(--radius-md);
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        .keyword-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-xs);
-            padding: var(--space-xs) var(--space-sm);
-            background: linear-gradient(135deg, var(--accent-tertiary), var(--purple));
-            color: white;
-            border-radius: var(--radius-sm);
-            font-size: 0.85rem;
-            font-weight: 500;
-            transition: all var(--transition);
-            cursor: default;
-        }
-
-        .keyword-tag.url-tag {
-            background: linear-gradient(135deg, var(--success), #40c057);
-        }
-
-        .keyword-tag .remove-tag {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            border-radius: 50%;
-            width: 16px;
-            height: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 12px;
-            line-height: 1;
-        }
-
-        .keyword-tag .remove-tag:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .keywords-display:empty::before {
-            content: "키워드나 URL을 추가하면 여기에 태그로 표시됩니다";
-            color: var(--text-tertiary);
-            font-style: italic;
-            font-size: 0.9rem;
-        }
-
         /* Buttons */
         .btn {
             padding: var(--space-md) var(--space-lg);
@@ -882,14 +794,8 @@
                 <form id="search-form">
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label">검색 키워드/URL 입력</label>
-                        <div class="keyword-input-container">
-                            <div class="keyword-input-wrapper">
-                                <input type="text" id="searchQuery" class="form-input keyword-input" placeholder="키워드나 YouTube URL을 입력하세요...">
-                                <button type="button" id="addKeywordBtn" class="add-keyword-btn">추가</button>
-                            </div>
-                            <div class="keywords-display" id="keywordsDisplay"></div>
-                        </div>
+                        <label class="form-label">검색 키워드</label>
+                        <input type="text" id="searchQuery" class="form-input" placeholder="예: 요리, 프로그래밍, 재테크...">
                     </div>
                     <div class="form-group">
                         <label class="form-label">결과 수</label>
@@ -1316,12 +1222,6 @@
                 this.isApiKeyVisible = false;
                 this.channelAverages = new Map();
                 
-                // 키워드 태그 관리
-                this.keywords = [];
-                this.keywordInput = null;
-                this.addKeywordBtn = null;
-                this.keywordsDisplay = null;
-                
                 // API 최적화 기능
                 this.quotaUsage = parseInt(localStorage.getItem('api-quota-usage')) || 0;
                 this.dailyQuotaLimit = 10000; // YouTube API v3 일일 할당량
@@ -1618,10 +1518,9 @@
                     return;
                 }
 
-                // 키워드 시스템에서 검색어 가져오기
-                const query = this.getSearchQuery();
+                const query = document.getElementById('searchQuery')?.value?.trim();
                 if (!query) {
-                    this.showError('검색어를 입력하거나 키워드를 추가해주세요.');
+                    this.showError('검색어를 입력해주세요.');
                     return;
                 }
 
@@ -2169,331 +2068,6 @@
                     errorDiv.style.display = 'none';
                 }
             }
-            
-            // 키워드 태그 시스템 초기화
-            initKeywordSystem() {
-                this.keywordInput = document.getElementById('searchQuery');
-                this.addKeywordBtn = document.getElementById('addKeywordBtn');
-                this.keywordsDisplay = document.getElementById('keywordsDisplay');
-                
-                if (!this.keywordInput || !this.addKeywordBtn || !this.keywordsDisplay) {
-                    console.warn('키워드 시스템 요소를 찾을 수 없습니다.');
-                    return;
-                }
-                
-                // 이벤트 리스너 추가
-                this.addKeywordBtn.addEventListener('click', () => {
-                    this.addKeyword();
-                });
-                
-                this.keywordInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        this.addKeyword();
-                    }
-                });
-                
-                // 저장된 키워드 로드
-                this.loadSavedKeywords();
-            }
-            
-            // 키워드 추가
-            async addKeyword() {
-                const input = this.keywordInput.value.trim();
-                if (!input) return;
-                
-                let keywordData = {
-                    text: '',
-                    type: 'keyword', // 'keyword' 또는 'url'
-                    original: input
-                };
-                
-                // URL인지 확인
-                if (this.isYouTubeURL(input)) {
-                    keywordData.type = 'url';
-                    // URL에서 키워드 추출 (비동기)
-                    try {
-                        this.showNotification('URL에서 키워드를 추출하고 있습니다...', 'info');
-                        keywordData.text = await this.extractKeywordsFromURL(input);
-                    } catch (error) {
-                        console.error('키워드 추출 오류:', error);
-                        keywordData.text = `url_${Date.now()}`;
-                    }
-                } else {
-                    keywordData.text = input;
-                }
-                
-                // 중복 체크
-                if (this.keywords.some(k => k.text === keywordData.text)) {
-                    this.showNotification('이미 추가된 키워드입니다.', 'warning');
-                    return;
-                }
-                
-                this.keywords.push(keywordData);
-                this.keywordInput.value = '';
-                this.updateKeywordsDisplay();
-                this.saveKeywords();
-                
-                this.showNotification(`${keywordData.type === 'url' ? 'URL에서 키워드 추출' : '키워드 추가'}: ${keywordData.text}`, 'success');
-            }
-            
-            // YouTube URL 확인
-            isYouTubeURL(text) {
-                const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/(watch\?v=|embed\/|v\/)|youtu\.be\/)/;
-                return youtubeRegex.test(text);
-            }
-            
-            // URL에서 키워드 추출
-            async extractKeywordsFromURL(url) {
-                try {
-                    // YouTube URL에서 비디오 ID 추출
-                    let videoId = this.extractVideoId(url);
-                    
-                    if (videoId) {
-                        // API가 있으면 비디오 정보를 가져와서 키워드 추출
-                        if (this.apiKey) {
-                            try {
-                                const videoInfo = await this.getVideoInfo(videoId);
-                                if (videoInfo) {
-                                    return this.extractKeywordsFromVideoInfo(videoInfo);
-                                }
-                            } catch (error) {
-                                console.warn('API를 통한 비디오 정보 가져오기 실패:', error);
-                            }
-                        }
-                        
-                        // API가 없거나 실패한 경우, 비디오 ID 기반 키워드 생성
-                        return `video_${videoId.substring(0, 8)}`;
-                    }
-                    
-                    // 채널 URL인지 확인
-                    if (url.includes('/channel/') || url.includes('/c/') || url.includes('/@')) {
-                        const channelKeyword = this.extractChannelKeyword(url);
-                        return channelKeyword || `channel_${Date.now()}`;
-                    }
-                    
-                    // 일반 URL에서 키워드 추출
-                    const urlParts = url.split(/[\/\?\&\=\_\-]+/);
-                    const keywords = urlParts.filter(part => 
-                        part.length > 2 && 
-                        !part.match(/^(https?|www|com|youtube|youtu|be|watch|embed|v|channel|c)$/i)
-                    ).slice(0, 3).join('_');
-                    
-                    return keywords || `youtube_url_${Date.now()}`;
-                } catch (error) {
-                    console.error('URL 키워드 추출 오류:', error);
-                    return `url_keyword_${Date.now()}`;
-                }
-            }
-            
-            // 비디오 ID 추출
-            extractVideoId(url) {
-                let videoId = '';
-                
-                if (url.includes('watch?v=')) {
-                    videoId = url.split('watch?v=')[1].split('&')[0];
-                } else if (url.includes('youtu.be/')) {
-                    videoId = url.split('youtu.be/')[1].split('?')[0];
-                } else if (url.includes('/embed/')) {
-                    videoId = url.split('/embed/')[1].split('?')[0];
-                } else if (url.includes('/v/')) {
-                    videoId = url.split('/v/')[1].split('?')[0];
-                }
-                
-                return videoId;
-            }
-            
-            // 채널 키워드 추출
-            extractChannelKeyword(url) {
-                if (url.includes('/@')) {
-                    return url.split('/@')[1].split('/')[0];
-                } else if (url.includes('/c/')) {
-                    return url.split('/c/')[1].split('/')[0];
-                } else if (url.includes('/channel/')) {
-                    const channelId = url.split('/channel/')[1].split('/')[0];
-                    return `ch_${channelId.substring(0, 8)}`;
-                }
-                return null;
-            }
-            
-            // 비디오 정보 가져오기
-            async getVideoInfo(videoId) {
-                try {
-                    const response = await fetch(
-                        `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet,statistics&key=${this.apiKey}`
-                    );
-                    
-                    if (!response.ok) {
-                        throw new Error('API 요청 실패');
-                    }
-                    
-                    const data = await response.json();
-                    return data.items && data.items.length > 0 ? data.items[0] : null;
-                } catch (error) {
-                    console.error('비디오 정보 가져오기 실패:', error);
-                    return null;
-                }
-            }
-            
-            // 비디오 정보에서 키워드 추출
-            extractKeywordsFromVideoInfo(videoInfo) {
-                try {
-                    const snippet = videoInfo.snippet;
-                    let keywords = [];
-                    
-                    // 제목에서 키워드 추출
-                    const title = snippet.title || '';
-                    const titleWords = title.split(/[\s\-_]+/)
-                        .filter(word => word.length > 2 && word.length < 15)
-                        .slice(0, 3);
-                    keywords.push(...titleWords);
-                    
-                    // 태그가 있으면 사용
-                    if (snippet.tags && snippet.tags.length > 0) {
-                        keywords.push(...snippet.tags.slice(0, 2));
-                    }
-                    
-                    // 카테고리 ID에서 키워드 생성 (선택사항)
-                    if (snippet.categoryId) {
-                        const categoryMap = {
-                            '1': 'film', '2': 'autos', '10': 'music', '15': 'pets',
-                            '17': 'sports', '19': 'travel', '20': 'gaming', '22': 'people',
-                            '23': 'comedy', '24': 'entertainment', '25': 'news', '26': 'howto',
-                            '27': 'education', '28': 'science'
-                        };
-                        const category = categoryMap[snippet.categoryId];
-                        if (category) keywords.push(category);
-                    }
-                    
-                    // 중복 제거 및 정리
-                    keywords = [...new Set(keywords)]
-                        .filter(keyword => keyword && keyword.length > 1)
-                        .slice(0, 3);
-                    
-                    return keywords.length > 0 ? keywords.join('_') : `video_${videoInfo.id}`;
-                } catch (error) {
-                    console.error('비디오 정보 키워드 추출 오류:', error);
-                    return `video_${videoInfo.id || Date.now()}`;
-                }
-            }
-            
-            // 키워드 삭제
-            removeKeyword(index) {
-                if (index >= 0 && index < this.keywords.length) {
-                    const removed = this.keywords.splice(index, 1)[0];
-                    this.updateKeywordsDisplay();
-                    this.saveKeywords();
-                    this.showNotification(`키워드 삭제: ${removed.text}`, 'info');
-                }
-            }
-            
-            // 키워드 표시 업데이트
-            updateKeywordsDisplay() {
-                if (!this.keywordsDisplay) return;
-                
-                this.keywordsDisplay.innerHTML = '';
-                
-                this.keywords.forEach((keyword, index) => {
-                    const tag = document.createElement('div');
-                    tag.className = `keyword-tag ${keyword.type === 'url' ? 'url-tag' : ''}`;
-                    
-                    tag.innerHTML = `
-                        <span>${keyword.text}</span>
-                        <button class="remove-tag" onclick="youtubeApp.removeKeyword(${index})" title="삭제">×</button>
-                    `;
-                    
-                    this.keywordsDisplay.appendChild(tag);
-                });
-            }
-            
-            // 키워드 저장
-            saveKeywords() {
-                try {
-                    localStorage.setItem('youtube-keywords', JSON.stringify(this.keywords));
-                } catch (error) {
-                    console.error('키워드 저장 오류:', error);
-                }
-            }
-            
-            // 저장된 키워드 로드
-            loadSavedKeywords() {
-                try {
-                    const saved = localStorage.getItem('youtube-keywords');
-                    if (saved) {
-                        this.keywords = JSON.parse(saved);
-                        this.updateKeywordsDisplay();
-                    }
-                } catch (error) {
-                    console.error('키워드 로드 오류:', error);
-                    this.keywords = [];
-                }
-            }
-            
-            // 검색에 사용할 키워드 문자열 생성
-            getSearchQuery() {
-                if (this.keywords.length === 0) {
-                    return this.keywordInput.value.trim();
-                }
-                return this.keywords.map(k => k.text).join(' ');
-            }
-            
-            // 알림 표시
-            showNotification(message, type = 'info') {
-                // 간단한 알림 시스템 (기존 코드에 알림 시스템이 있다면 그것을 사용)
-                console.log(`[${type.toUpperCase()}] ${message}`);
-                
-                // 임시 알림 요소 생성
-                const notification = document.createElement('div');
-                notification.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    padding: 12px 20px;
-                    border-radius: 8px;
-                    color: white;
-                    font-weight: 500;
-                    z-index: 10000;
-                    opacity: 0;
-                    transform: translateX(100%);
-                    transition: all 0.3s ease;
-                `;
-                
-                // 타입별 색상 설정
-                switch (type) {
-                    case 'success':
-                        notification.style.background = 'linear-gradient(135deg, #51cf66, #40c057)';
-                        break;
-                    case 'warning':
-                        notification.style.background = 'linear-gradient(135deg, #ffd43b, #fab005)';
-                        notification.style.color = '#333';
-                        break;
-                    case 'error':
-                        notification.style.background = 'linear-gradient(135deg, #ff6b6b, #e03131)';
-                        break;
-                    default:
-                        notification.style.background = 'linear-gradient(135deg, #45b7d1, #339af0)';
-                }
-                
-                notification.textContent = message;
-                document.body.appendChild(notification);
-                
-                // 애니메이션
-                setTimeout(() => {
-                    notification.style.opacity = '1';
-                    notification.style.transform = 'translateX(0)';
-                }, 100);
-                
-                // 3초 후 제거
-                setTimeout(() => {
-                    notification.style.opacity = '0';
-                    notification.style.transform = 'translateX(100%)';
-                    setTimeout(() => {
-                        if (notification.parentNode) {
-                            notification.parentNode.removeChild(notification);
-                        }
-                    }, 300);
-                }, 3000);
-            }
         }
         
         // Global variables for backward compatibility
@@ -2517,9 +2091,6 @@
             youtubeApp = new YouTubeSearchApp();
             // 전역 접근을 위해 window 객체에 할당
             window.youtubeApp = youtubeApp;
-            
-            // 키워드 태그 시스템 초기화
-            youtubeApp.initKeywordSystem();
             
             if (youtubeApp && typeof youtubeApp.updateApiStatus === 'function') {
                 youtubeApp.updateApiStatus();
@@ -2713,10 +2284,9 @@
                 return;
             }
 
-            // 키워드 시스템에서 검색어 가져오기
-            const query = youtubeApp ? youtubeApp.getSearchQuery() : document.getElementById('searchQuery').value.trim();
+            const query = document.getElementById('searchQuery').value.trim();
             if (!query) {
-                alert('검색 키워드를 입력하거나 키워드를 추가해주세요.');
+                alert('검색 키워드를 입력해주세요.');
                 return;
             }
 

@@ -10,7 +10,17 @@
       "mcp__playwright__browser_console_messages",
       "mcp__playwright__browser_type",
       "mcp__playwright__browser_wait_for",
-      "mcp__playwright__browser_evaluate"
+      "mcp__playwright__browser_evaluate",
+      "Read(P:\\0_지키기\\02_PROJECT\\99_Working/**)",
+      "Read(P:\\0_지키기\\02_PROJECT\\99_Working\\YoutubeToGold/**)",
+      "Read(P:\\0_지키기\\02_PROJECT\\99_Working\\YoutubeToGold/**)",
+      "mcp__playwright__browser_close",
+      "Bash(git commit:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(git remote add:*)",
+      "Bash(git fetch:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(git branch:*)"
     ],
     "deny": [],
     "ask": []
