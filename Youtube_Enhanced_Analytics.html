@@ -3295,270 +3295,50 @@
                 } catch (error) {
                     console.error('Error building consulting recommendations:', error);
                     consulting = {
-                        dataAnalysis: { title: '오류 발생', insights: ['분석 중 오류가 발생했습니다.'], recommendations: [], actionItems: [] },
-                        contentStrategy: { title: '오류 발생', insights: ['분석 중 오류가 발생했습니다.'], recommendations: [], contentIdeas: [] },
-                        seoStrategy: { title: '오류 발생', insights: ['분석 중 오류가 발생했습니다.'], recommendations: [], seoOptimization: {} },
-                        visualStrategy: { title: '오류 발생', insights: ['분석 중 오류가 발생했습니다.'], recommendations: [], thumbnailTemplates: [] },
-                        scriptStrategy: { title: '오류 발생', insights: ['분석 중 오류가 발생했습니다.'], recommendations: [], scriptTemplates: {} },
-                        marketingStrategy: { title: '오류 발생', insights: ['분석 중 오류가 발생했습니다.'], recommendations: [], marketingChannels: [] },
-                        actionPlan: { title: '오류 발생', phases: [], kpis: [] },
                         strengths: '오류 발생',
                         weaknesses: '오류 발생',
                         strategy: '오류 발생',
                         title: '오류 발생',
-                        description: '오류 발생',
-                        hook: '오류 발생',
-                        script: '오류 발생',
-                        structure: '오류 발생',
-                        thumbnailPrompt: '오류 발생'
+                        description: '오류 발생'
                     };
                 }
 
+                console.log('Setting body.innerHTML...');
                 body.innerHTML = `
-                    <div class=\"report-grid\">
-                        <div class=\"report-card\">
-                            <h4>📊 요약 통계</h4>
-                            <div class=\"benchmark-summary\">
-                                <div class=\"benchmark-stat\"><div class=\"benchmark-stat-value\">${stats.count}</div><div class=\"benchmark-stat-label\">선택된 영상</div></div>
-                                <div class=\"benchmark-stat\"><div class=\"benchmark-stat-value\">${formatNumber(avgViews)}</div><div class=\"benchmark-stat-label\">평균 조회수</div></div>
-                                <div class=\"benchmark-stat\"><div class=\"benchmark-stat-value\">${avgOutlier}</div><div class=\"benchmark-stat-label\">평균 Outlier</div></div>
-                                <div class=\"benchmark-stat\"><div class=\"benchmark-stat-value\">${avgEngagement}%</div><div class=\"benchmark-stat-label\">평균 참여율</div></div>
-                            </div>
+                    <div style="padding: 20px; color: white;">
+                        <h2>🎯 벤치마킹 분석 결과</h2>
+                        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; margin: 20px 0;">
+                            <h3>📊 요약 통계</h3>
+                            <p>선택된 영상: ${stats.count}개</p>
+                            <p>평균 조회수: ${formatNumber(avgViews)}</p>
+                            <p>평균 Outlier: ${avgOutlier}</p>
+                            <p>평균 참여율: ${avgEngagement}%</p>
                         </div>
-                        <div class=\"report-card\">
-                            <h4>🏆 상위 영상 (조회수)</h4>
-                            ${topByViews.map(v => `<div style=\\\"margin-bottom:8px;\\\">${escapeHtml(v.snippet?.title||'')} — 👀 ${formatNumber(parseInt(v.statistics?.viewCount||0))}</div>`).join('')}
+                        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; margin: 20px 0;">
+                            <h3>🏆 상위 영상 (조회수)</h3>
+                            ${topByViews.map(v => `<p>${escapeHtml(v.snippet?.title||'')} — 👀 ${formatNumber(parseInt(v.statistics?.viewCount||0))}</p>`).join('')}
                         </div>
-                        <div class=\"report-card\">
-                            <h4>📈 상위 영상 (Outlier)</h4>
-                            ${topByOutlier.map(v => `<div style=\\\"margin-bottom:8px;\\\">${escapeHtml(v.snippet?.title||'')} — 📊 ${v.outlierScore||0}</div>`).join('')}
+                        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; margin: 20px 0;">
+                            <h3>📈 상위 영상 (Outlier)</h3>
+                            ${topByOutlier.map(v => `<p>${escapeHtml(v.snippet?.title||'')} — 📊 ${v.outlierScore||0}</p>`).join('')}
                         </div>
-                    </div>
-                    
-                    <!-- 전문가 컨설팅 섹션 -->
-                    <div class=\"consulting-section\">
-                        <h2>🎯 전문가 컨설팅 리포트 (100만원급 분석)</h2>
-                        
-                        <!-- 데이터 분석 전문가 -->
-                        <div class=\"consulting-item\">
-                            <h3>${consulting.dataAnalysis.title}</h3>
-                            <div class=\"insights\">
-                                <h4>📈 핵심 인사이트</h4>
-                                <ul>
-                                    ${consulting.dataAnalysis.insights.map(insight => `<li>${insight}</li>`).join('')}
-                                </ul>
-                            </div>
-                            <div class=\"recommendations\">
-                                <h4>💡 전문가 추천사항</h4>
-                                <ul>
-                                    ${consulting.dataAnalysis.recommendations.map(rec => `<li>${rec}</li>`).join('')}
-                                </ul>
-                            </div>
-                            <div class=\"action-items\">
-                                <h4>🎯 실행 액션 아이템</h4>
-                                <ul>
-                                    ${consulting.dataAnalysis.actionItems.map(item => `<li>${item}</li>`).join('')}
-                                </ul>
-                            </div>
+                        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; margin: 20px 0;">
+                            <h3>💡 전문가 컨설팅</h3>
+                            <p><strong>장점:</strong> ${consulting.strengths}</p>
+                            <p><strong>단점:</strong> ${consulting.weaknesses}</p>
+                            <p><strong>전략:</strong> ${consulting.strategy}</p>
                         </div>
-
-                        <!-- 콘텐츠 전략 전문가 -->
-                        <div class=\"consulting-item\">
-                            <h3>${consulting.contentStrategy.title}</h3>
-                            <div class=\"insights\">
-                                <h4>📈 핵심 인사이트</h4>
-                                <ul>
-                                    ${consulting.contentStrategy.insights.map(insight => `<li>${insight}</li>`).join('')}
-                                </ul>
-                            </div>
-                            <div class=\"recommendations\">
-                                <h4>💡 전문가 추천사항</h4>
-                                <ul>
-                                    ${consulting.contentStrategy.recommendations.map(rec => `<li>${rec}</li>`).join('')}
-                                </ul>
-                            </div>
-                            <div class=\"content-ideas\">
-                                <h4>🚀 콘텐츠 아이디어</h4>
-                                <ul>
-                                    ${consulting.contentStrategy.contentIdeas.map(idea => `<li>${idea}</li>`).join('')}
-                                </ul>
-                            </div>
+                        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; margin: 20px 0;">
+                            <h3>📝 추천 제목</h3>
+                            <p>${consulting.title}</p>
                         </div>
-
-                        <!-- SEO/알고리즘 전문가 -->
-                        <div class=\"consulting-item\">
-                            <h3>${consulting.seoStrategy.title}</h3>
-                            <div class=\"insights\">
-                                <h4>📈 핵심 인사이트</h4>
-                                <ul>
-                                    ${consulting.seoStrategy.insights.map(insight => `<li>${insight}</li>`).join('')}
-                                </ul>
-                            </div>
-                            <div class=\"recommendations\">
-                                <h4>💡 전문가 추천사항</h4>
-                                <ul>
-                                    ${consulting.seoStrategy.recommendations.map(rec => `<li>${rec}</li>`).join('')}
-                                </ul>
-                            </div>
-                            <div class=\"seo-optimization\">
-                                <h4>🔧 SEO 최적화 가이드</h4>
-                                <ul>
-                                    <li><strong>제목 최적화:</strong> ${consulting.seoStrategy.seoOptimization.titleOptimization}</li>
-                                    <li><strong>설명 최적화:</strong> ${consulting.seoStrategy.seoOptimization.descriptionOptimization}</li>
-                                    <li><strong>태그 최적화:</strong> ${consulting.seoStrategy.seoOptimization.tagOptimization}</li>
-                                    <li><strong>썸네일 최적화:</strong> ${consulting.seoStrategy.seoOptimization.thumbnailOptimization}</li>
-                                </ul>
-                            </div>
+                        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; margin: 20px 0;">
+                            <h3>📋 추천 설명</h3>
+                            <p style="white-space: pre-wrap;">${consulting.description}</p>
                         </div>
-
-                        <!-- 시각적/썸네일 전문가 -->
-                        <div class=\"consulting-item\">
-                            <h3>${consulting.visualStrategy.title}</h3>
-                            <div class=\"insights\">
-                                <h4>📈 핵심 인사이트</h4>
-                                <ul>
-                                    ${consulting.visualStrategy.insights.map(insight => `<li>${insight}</li>`).join('')}
-                                </ul>
-                            </div>
-                            <div class=\"recommendations\">
-                                <h4>💡 전문가 추천사항</h4>
-                                <ul>
-                                    ${consulting.visualStrategy.recommendations.map(rec => `<li>${rec}</li>`).join('')}
-                                </ul>
-                            </div>
-                            <div class=\"thumbnail-templates\">
-                                <h4>🎨 썸네일 템플릿</h4>
-                                <ul>
-                                    ${consulting.visualStrategy.thumbnailTemplates.map(template => `<li>${template}</li>`).join('')}
-                                </ul>
-                            </div>
-                        </div>
-
-                        <!-- 스크립트/구성 전문가 -->
-                        <div class=\"consulting-item\">
-                            <h3>${consulting.scriptStrategy.title}</h3>
-                            <div class=\"insights\">
-                                <h4>📈 핵심 인사이트</h4>
-                                <ul>
-                                    ${consulting.scriptStrategy.insights.map(insight => `<li>${insight}</li>`).join('')}
-                                </ul>
-                            </div>
-                            <div class=\"recommendations\">
-                                <h4>💡 전문가 추천사항</h4>
-                                <ul>
-                                    ${consulting.scriptStrategy.recommendations.map(rec => `<li>${rec}</li>`).join('')}
-                                </ul>
-                            </div>
-                            <div class=\"script-templates\">
-                                <h4>📝 스크립트 템플릿</h4>
-                                <ul>
-                                    <li><strong>후킹:</strong> ${consulting.scriptStrategy.scriptTemplates.hook}</li>
-                                    <li><strong>문제 제기:</strong> ${consulting.scriptStrategy.scriptTemplates.problem}</li>
-                                    <li><strong>해결책:</strong> ${consulting.scriptStrategy.scriptTemplates.solution}</li>
-                                    <li><strong>CTA:</strong> ${consulting.scriptStrategy.scriptTemplates.cta}</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <!-- 마케팅/브랜딩 전문가 -->
-                        <div class=\"consulting-item\">
-                            <h3>${consulting.marketingStrategy.title}</h3>
-                            <div class=\"insights\">
-                                <h4>📈 핵심 인사이트</h4>
-                                <ul>
-                                    ${consulting.marketingStrategy.insights.map(insight => `<li>${insight}</li>`).join('')}
-                                </ul>
-                            </div>
-                            <div class=\"recommendations\">
-                                <h4>💡 전문가 추천사항</h4>
-                                <ul>
-                                    ${consulting.marketingStrategy.recommendations.map(rec => `<li>${rec}</li>`).join('')}
-                                </ul>
-                            </div>
-                            <div class=\"marketing-channels\">
-                                <h4>🚀 마케팅 채널</h4>
-                                <ul>
-                                    ${consulting.marketingStrategy.marketingChannels.map(channel => `<li>${channel}</li>`).join('')}
-                                </ul>
-                            </div>
-                        </div>
-
-                        <!-- 실행 로드맵 -->
-                        <div class=\"consulting-item\">
-                            <h3>${consulting.actionPlan.title}</h3>
-                            <div class=\"phases\">
-                                ${consulting.actionPlan.phases.map(phase => `
-                                    <div class=\"phase\">
-                                        <h4>${phase.phase}</h4>
-                                        <ul>
-                                            ${phase.tasks.map(task => `<li>${task}</li>`).join('')}
-                                        </ul>
-                                    </div>
-                                `).join('')}
-                            </div>
-                            <div class=\"kpis\">
-                                <h4>🎯 핵심 성과 지표 (KPI)</h4>
-                                <ul>
-                                    ${consulting.actionPlan.kpis.map(kpi => `<li>${kpi}</li>`).join('')}
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class=\"report-card\">
-                        <h4>📋 상세 분석 (각 영상)</h4>
-                        ${items.map(v => {
-                            const vid = v.id?.videoId || v.id;
-                            const s = v.snippet || {};
-                            const cd = v.contentDetails || {};
-                            const st = v.statistics || {};
-                            const tags = (s.tags || []).slice(0,10).map(t => `#${escapeHtml(t)}`).join(' ');
-                            const caption = cd.caption === 'true' ? '있음' : (cd.caption === 'false' ? '없음' : (cd.caption || '미상'));
-                            const cr = cd.contentRating ? '제한 있음' : '제한 없음';
-                            return `
-                                <div class=\\\"card\\\" style=\\\"margin-bottom:16px;\\\">
-                                    <div class=\\\"card-header\\\"><h3>${escapeHtml(s.title || '')}</h3></div>
-                                    <div class=\\\"card-body\\\">
-                                        <div style=\\\"display:grid;gap:8px;\\\">
-                                            <div><strong>제목</strong>: ${escapeHtml(s.title || '')}</div>
-                                            <div><strong>설명</strong>: ${escapeHtml((s.description || '').slice(0,400))}${(s.description||'').length>400?'…':''}</div>
-                                            <div><strong>태그</strong>: ${tags || '—'}</div>
-                                            <div><strong>카테고리ID</strong>: ${s.categoryId || '—'}</div>
-                                            <div><strong>게시일</strong>: ${formatDate(s.publishedAt)}</div>
-                                            <div><strong>길이</strong>: ${formatDuration(cd.duration || '')}</div>
-                                            <div><strong>자막</strong>: ${caption}</div>
-                                            <div><strong>연령 제한</strong>: ${cr}</div>
-                                            <div><strong>조회수</strong>: ${formatNumber(parseInt(st.viewCount||'0'))} | <strong>좋아요</strong>: ${formatNumber(parseInt(st.likeCount||'0'))} | <strong>댓글</strong>: ${formatNumber(parseInt(st.commentCount||'0'))}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        }).join('')}
                     </div>
                 `;
-
-                // Optional Gemini hook
-                const genBtn = document.getElementById('btn-generate-thumb');
-                const preview = document.getElementById('thumb-preview');
-                if (genBtn && preview) {
-                    genBtn.onclick = async () => {
-                        genBtn.disabled = true;
-                        genBtn.textContent = '생성 중...';
-                        try {
-                            const url = await this.generateThumbnailWithGemini(consulting.thumbnailPrompt);
-                            if (url) {
-                                preview.innerHTML = `<img src=\"${url}\" alt=\"thumbnail\" style=\"max-width:100%;border-radius:8px;border:1px solid rgba(255,255,255,0.2);\"/>`;
-                            } else {
-                                preview.innerHTML = '<div>생성 결과를 불러오지 못했습니다.</div>';
-                            }
-                        } catch (e) {
-                            preview.innerHTML = '<div>생성 중 오류가 발생했습니다.</div>';
-                        } finally {
-                            genBtn.disabled = false;
-                            genBtn.textContent = 'Gemini로 썸네일 생성(실험)';
-                        }
-                    };
-                }
+                console.log('body.innerHTML set successfully');
             }
 
             buildConsultingRecommendations(items) {
