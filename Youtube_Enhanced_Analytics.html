@@ -1895,6 +1895,7 @@
                 this.initializeQuotaManagement();
                 this.initializeAdvancedFilters();
                 this.initializeBenchmarkControls();
+                this.initKeywordSystem();
             }
 
             setupEventListeners() {
@@ -2752,6 +2753,11 @@
                 this.addKeywordBtn = document.getElementById('addKeywordBtn');
                 this.keywordsDisplay = document.getElementById('keywordsDisplay');
                 
+                // keywords 배열 초기화
+                if (!this.keywords) {
+                    this.keywords = [];
+                }
+                
                 if (!this.keywordInput || !this.addKeywordBtn || !this.keywordsDisplay) {
                     console.warn('키워드 시스템 요소를 찾을 수 없습니다.');
                     return;
@@ -2759,6 +2765,7 @@
                 
                 // 이벤트 리스너 추가
                 this.addKeywordBtn.addEventListener('click', () => {
+                    console.log('추가 버튼 클릭됨');
                     this.addKeyword();
                 });
                 
@@ -2775,8 +2782,18 @@
             
             // 키워드 추가
             async addKeyword() {
+                console.log('addKeyword 함수 호출됨');
                 const input = this.keywordInput.value.trim();
-                if (!input) return;
+                console.log('입력값:', input);
+                if (!input) {
+                    console.log('입력값이 비어있음');
+                    return;
+                }
+                
+                // keywords 배열이 정의되지 않은 경우 초기화
+                if (!this.keywords) {
+                    this.keywords = [];
+                }
                 
                 let keywordData = {
                     text: '',
@@ -6013,8 +6030,7 @@ This thumbnail should make viewers stop scrolling and click immediately!`;
             // 전역 접근을 위해 window 객체에 할당
             window.youtubeApp = youtubeApp;
             
-            // 키워드 태그 시스템 초기화
-            youtubeApp.initKeywordSystem();
+            // 키워드 태그 시스템은 이미 initialize()에서 초기화됨
             
             if (youtubeApp && typeof youtubeApp.updateApiStatus === 'function') {
                 youtubeApp.updateApiStatus();
