@@ -1899,6 +1899,8 @@
             }
 
             setupEventListeners() {
+                console.log('setupEventListeners 시작');
+                
                 // API key input visibility toggle
                 document.addEventListener('click', (e) => {
                     if (e.target.id === 'toggleApiKeyVisibility') {
@@ -1931,6 +1933,42 @@
                     if (e.key === 'Enter' && document.activeElement.id === 'searchQuery') {
                         e.preventDefault();
                         this.performSearch();
+                    }
+                });
+
+                // 검색 버튼 클릭 이벤트
+                const searchBtn = document.getElementById('search-btn');
+                console.log('검색 버튼 찾기:', searchBtn);
+                if (searchBtn) {
+                    searchBtn.addEventListener('click', (e) => {
+                        console.log('검색 버튼 클릭됨');
+                        e.preventDefault();
+                        this.performSearch();
+                    });
+                } else {
+                    console.warn('검색 버튼을 찾을 수 없습니다');
+                }
+
+                // API 키 저장 버튼
+                const saveApiKeyBtn = document.getElementById('save-api-key');
+                if (saveApiKeyBtn) {
+                    saveApiKeyBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.saveApiKey();
+                    });
+                }
+
+                // 모달 닫기 버튼들
+                document.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('close-btn') || e.target.classList.contains('modal-close')) {
+                        this.closeModal();
+                    }
+                });
+
+                // 모달 배경 클릭으로 닫기
+                document.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('modal-overlay')) {
+                        this.closeModal();
                     }
                 });
             }
@@ -2185,7 +2223,9 @@
             }
 
             async performSearch(pageToken = '') {
+                console.log('performSearch 함수 호출됨');
                 if (!this.apiKey) {
+                    console.log('API 키가 없음');
                     this.showError('API 키를 입력해주세요.');
                     return;
                 }
