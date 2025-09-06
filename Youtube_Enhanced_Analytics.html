@@ -2554,31 +2554,31 @@
 
                 const thumbnail = item.snippet.thumbnails.medium || item.snippet.thumbnails.default;
                 const stats = item.statistics || {};
-                const viewCount = this.formatNumber(parseInt(stats.viewCount || '0'));
-                const duration = this.formatDuration(item.contentDetails?.duration);
-                const publishedAt = this.formatDate(item.snippet.publishedAt);
-                const subscriberCount = this.formatNumber(parseInt(item.channelStatistics?.subscriberCount || '0'));
+                const viewCount = formatNumber(parseInt(stats.viewCount || '0'));
+                const duration = formatDuration(item.contentDetails?.duration);
+                const publishedAt = formatDate(item.snippet.publishedAt);
+                const subscriberCount = formatNumber(parseInt(item.channelStatistics?.subscriberCount || '0'));
                 
                 // Outlier score and ranking
                 const outlierScore = item.outlierScore || 0;
                 const rank = this.getOutlierRank(outlierScore);
                 const viewRatio = item.viewRatio || 0;
-                const channelAvgViews = this.formatNumber(item.channelAvgViews || 0);
+                const channelAvgViews = formatNumber(item.channelAvgViews || 0);
                 const engagementRate = ((item.engagementRate || 0) * 100).toFixed(2);
 
                 card.innerHTML = `
                     <div class="benchmark-checkbox" onclick="event.stopPropagation(); toggleBenchmarkSelection('${item.id.videoId}')"></div>
                     <div class="thumbnail">
-                        <img src="${thumbnail.url}" alt="${this.cleanText(item.snippet.title)}" loading="lazy">
+                        <img src="${thumbnail.url}" alt="${escapeHtml(item.snippet.title)}" loading="lazy">
                         ${duration ? `<div class="duration">${duration}</div>` : ''}
                         <div class="outlier-badge ${rank.class}">${rank.emoji} ${rank.grade}</div>
                     </div>
                     <div class="video-info">
                         <a href="https://www.youtube.com/watch?v=${item.id.videoId}" 
                            target="_blank" class="video-title">
-                            ${this.cleanText(item.snippet.title)}
+                            ${escapeHtml(item.snippet.title)}
                         </a>
-                        <div class="channel-name">${this.cleanText(item.snippet.channelTitle)}</div>
+                        <div class="channel-name">${escapeHtml(item.snippet.channelTitle)}</div>
                         <div class="video-meta">
                             <span>조회수 ${viewCount}</span>
                             <span>구독자 ${subscriberCount}</span>
@@ -3199,7 +3199,7 @@
                             <div class="benchmark-stat-label">선택된 영상 수</div>
                         </div>
                         <div class="benchmark-stat">
-                            <div class="benchmark-stat-value">${this.formatNumber(avgViews)}</div>
+                            <div class="benchmark-stat-value">${formatNumber(avgViews)}</div>
                             <div class="benchmark-stat-label">평균 조회수</div>
                         </div>
                         <div class="benchmark-stat">
@@ -3215,8 +3215,8 @@
                 if (detailsEl) {
                     detailsEl.innerHTML = enriched.slice(0, 50).map(it => {
                         const vid = it.id?.videoId || it.id;
-                        const title = this.cleanText(it.snippet?.title || '');
-                        const views = this.formatNumber(parseInt(it.statistics?.viewCount || '0'));
+                        const title = escapeHtml(it.snippet?.title || '');
+                        const views = formatNumber(parseInt(it.statistics?.viewCount || '0'));
                         const outlier = (it.outlierScore || 0);
                         return `<div class="card" style="margin-bottom: 12px;"><div class="card-header"><h3>${title}</h3></div><div style=\"display:flex;gap:16px;\"><span>👀 ${views}</span><span>📊 ${outlier}점</span></div></div>`;
                     }).join('');
@@ -3287,18 +3287,18 @@
                             <h4>📊 요약 통계</h4>
                             <div class=\"benchmark-summary\">
                                 <div class=\"benchmark-stat\"><div class=\"benchmark-stat-value\">${stats.count}</div><div class=\"benchmark-stat-label\">선택된 영상</div></div>
-                                <div class=\"benchmark-stat\"><div class=\"benchmark-stat-value\">${this.formatNumber(avgViews)}</div><div class=\"benchmark-stat-label\">평균 조회수</div></div>
+                                <div class=\"benchmark-stat\"><div class=\"benchmark-stat-value\">${formatNumber(avgViews)}</div><div class=\"benchmark-stat-label\">평균 조회수</div></div>
                                 <div class=\"benchmark-stat\"><div class=\"benchmark-stat-value\">${avgOutlier}</div><div class=\"benchmark-stat-label\">평균 Outlier</div></div>
                                 <div class=\"benchmark-stat\"><div class=\"benchmark-stat-value\">${avgEngagement}%</div><div class=\"benchmark-stat-label\">평균 참여율</div></div>
                             </div>
                         </div>
                         <div class=\"report-card\">
                             <h4>🏆 상위 영상 (조회수)</h4>
-                            ${topByViews.map(v => `<div style=\\\"margin-bottom:8px;\\\">${this.cleanText(v.snippet?.title||'')} — 👀 ${this.formatNumber(parseInt(v.statistics?.viewCount||0))}</div>`).join('')}
+                            ${topByViews.map(v => `<div style=\\\"margin-bottom:8px;\\\">${escapeHtml(v.snippet?.title||'')} — 👀 ${formatNumber(parseInt(v.statistics?.viewCount||0))}</div>`).join('')}
                         </div>
                         <div class=\"report-card\">
                             <h4>📈 상위 영상 (Outlier)</h4>
-                            ${topByOutlier.map(v => `<div style=\\\"margin-bottom:8px;\\\">${this.cleanText(v.snippet?.title||'')} — 📊 ${v.outlierScore||0}</div>`).join('')}
+                            ${topByOutlier.map(v => `<div style=\\\"margin-bottom:8px;\\\">${escapeHtml(v.snippet?.title||'')} — 📊 ${v.outlierScore||0}</div>`).join('')}
                         </div>
                     </div>
                     
@@ -3479,23 +3479,23 @@
                             const s = v.snippet || {};
                             const cd = v.contentDetails || {};
                             const st = v.statistics || {};
-                            const tags = (s.tags || []).slice(0,10).map(t => `#${this.cleanText(t)}`).join(' ');
+                            const tags = (s.tags || []).slice(0,10).map(t => `#${escapeHtml(t)}`).join(' ');
                             const caption = cd.caption === 'true' ? '있음' : (cd.caption === 'false' ? '없음' : (cd.caption || '미상'));
                             const cr = cd.contentRating ? '제한 있음' : '제한 없음';
                             return `
                                 <div class=\\\"card\\\" style=\\\"margin-bottom:16px;\\\">
-                                    <div class=\\\"card-header\\\"><h3>${this.cleanText(s.title || '')}</h3></div>
+                                    <div class=\\\"card-header\\\"><h3>${escapeHtml(s.title || '')}</h3></div>
                                     <div class=\\\"card-body\\\">
                                         <div style=\\\"display:grid;gap:8px;\\\">
-                                            <div><strong>제목</strong>: ${this.cleanText(s.title || '')}</div>
-                                            <div><strong>설명</strong>: ${this.cleanText((s.description || '').slice(0,400))}${(s.description||'').length>400?'…':''}</div>
+                                            <div><strong>제목</strong>: ${escapeHtml(s.title || '')}</div>
+                                            <div><strong>설명</strong>: ${escapeHtml((s.description || '').slice(0,400))}${(s.description||'').length>400?'…':''}</div>
                                             <div><strong>태그</strong>: ${tags || '—'}</div>
                                             <div><strong>카테고리ID</strong>: ${s.categoryId || '—'}</div>
-                                            <div><strong>게시일</strong>: ${this.formatDate(s.publishedAt)}</div>
-                                            <div><strong>길이</strong>: ${this.formatDuration(cd.duration || '')}</div>
+                                            <div><strong>게시일</strong>: ${formatDate(s.publishedAt)}</div>
+                                            <div><strong>길이</strong>: ${formatDuration(cd.duration || '')}</div>
                                             <div><strong>자막</strong>: ${caption}</div>
                                             <div><strong>연령 제한</strong>: ${cr}</div>
-                                            <div><strong>조회수</strong>: ${this.formatNumber(parseInt(st.viewCount||'0'))} | <strong>좋아요</strong>: ${this.formatNumber(parseInt(st.likeCount||'0'))} | <strong>댓글</strong>: ${this.formatNumber(parseInt(st.commentCount||'0'))}</div>
+                                            <div><strong>조회수</strong>: ${formatNumber(parseInt(st.viewCount||'0'))} | <strong>좋아요</strong>: ${formatNumber(parseInt(st.likeCount||'0'))} | <strong>댓글</strong>: ${formatNumber(parseInt(st.commentCount||'0'))}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -3553,7 +3553,18 @@
                     marketingStrategy: this.generateMarketingStrategyReport(analysis, items),
                     
                     // 7. 실행 로드맵
-                    actionPlan: this.generateActionPlan(analysis, items)
+                    actionPlan: this.generateActionPlan(analysis, items),
+                    
+                    // 기존 호환성을 위한 레거시 필드들
+                    strengths: analysis.basic.avgViews > 100000 ? '높은 평균 조회수' : '개선 여지 있음',
+                    weaknesses: analysis.basic.engagementRate < 3 ? '참여도 개선 필요' : '양호한 참여도',
+                    strategy: '전문가 컨설팅 리포트를 참고하여 전략 수립',
+                    title: '조회수 100만 달성 비법: [핵심 키워드]로 7일 만에 결과 만들기 (실전 가이드)',
+                    description: `이 영상은 [핵심 키워드] 주제로 100만 조회수를 목표로 제작된 실전 가이드입니다.\n\n타임라인\n00:00 후킹 — 왜 지금 [키워드]인가\n00:20 실전 목표/결과 미리보기\n01:00 핵심 전략 요약(3가지)\n03:00 단계별 실습 A\n07:00 단계별 실습 B\n12:00 자주 하는 실수/해결\n14:00 체크리스트/템플릿 제공\n\n해시태그\n#[키워드] #[카테고리] #[트렌드]`,
+                    hook: '"지금부터 7일 안에 [키워드]로 결과를 내는 가장 빠른 방법을 공개합니다. 실패했던 사람들도 이 순서대로만 하면 달라집니다."',
+                    script: `1) Hook (0:00-0:20): 문제/기회 제시, 강한 약속\n2) Preview (0:20-0:40): 결과/사례 스니펫\n3) Setup (0:40-1:10): 준비물/사전지식\n4) Core Steps (1:10-9:00): 3-5 단계, 각 단계 60-120초\n5) Proof (9:00-10:30): 전/후 비교, 실제 화면\n6) Pitfalls (10:30-12:00): 흔한 실수 3가지\n7) CTA (12:00-12:30): 댓글 유도 질문 + 다음편 티저`,
+                    structure: `- 오프닝: 20초 내 강한 비주얼과 결과 미리보기\n- 본문: 단계별 시연 + 체크리스트 오버레이\n- B-roll: 손/화면 클로즈업, 텍스트 팝\n- 오디오: 경쾌한 bpm 100-110, 전환마다 리듬 포인트`,
+                    thumbnailPrompt: `Ultra-detailed thumbnail for YouTube about [핵심 키워드]. One main subject, high-contrast colors, bold 2-3 word overlay in Korean, expressive face or clear object, clean background, cinematic lighting, 4k, no clutter.`
                 };
 
                 return consulting;
@@ -3829,7 +3840,7 @@
                 return {
                     title: "📊 데이터 분석 전문가 리포트",
                     insights: [
-                        `현재 평균 조회수: ${this.formatNumber(basic.avgViews)} (최고: ${this.formatNumber(basic.maxViews)})`,
+                        `현재 평균 조회수: ${formatNumber(basic.avgViews)} (최고: ${formatNumber(basic.maxViews)})`,
                         `추정 CTR: ${advanced.estimatedCTR}% (업계 평균: 2-5%)`,
                         `추정 AVD: ${Math.round(advanced.estimatedAVD/60)}분 (목표: 50% 이상)`,
                         `참여율: ${basic.engagementRate.toFixed(2)}% (목표: 3% 이상)`,
@@ -4374,6 +4385,16 @@
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
         }
 
         function formatDuration(isoDuration) {
