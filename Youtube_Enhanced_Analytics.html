@@ -896,7 +896,13 @@
                         <select id="maxResults" class="form-select">
                             <option value="25">25개</option>
                             <option value="50">50개</option>
+                            <option value="100">100개</option>
+                            <option value="custom">직접 입력</option>
                         </select>
+                        <input type="number" id="maxResultsCustom" class="form-input" 
+                               placeholder="결과 수 입력 (1-50)" 
+                               min="1" max="50" 
+                               style="display: none; margin-top: 8px;">
                     </div>
                     <div class="form-group">
                         <label class="form-label">정렬 기준</label>
@@ -1361,7 +1367,7 @@
                     });
                     // Custom result count toggle
                     document.getElementById('maxResults').addEventListener('change', (e) => {
-                        const customInput = document.getElementById('custom-results');
+                        const customInput = document.getElementById('maxResultsCustom');
                         if (e.target.value === 'custom') {
                             if (customInput) customInput.style.display = 'block';
                         } else {
@@ -1437,6 +1443,24 @@
                         });
                     }
                 });
+            }
+
+            getMaxResults() {
+                const maxResultsSelect = document.getElementById('maxResults');
+                const customInput = document.getElementById('maxResultsCustom');
+                
+                if (maxResultsSelect && maxResultsSelect.value === 'custom' && customInput) {
+                    const customValue = parseInt(customInput.value);
+                    // Validate custom value (1-50 per YouTube API limits)
+                    if (customValue && customValue >= 1 && customValue <= 50) {
+                        return customValue.toString();
+                    } else {
+                        // Default to 25 if invalid custom value
+                        return '25';
+                    }
+                }
+                
+                return maxResultsSelect?.value || '25';
             }
 
             loadApiKey() {
@@ -1634,7 +1658,7 @@
                         part: 'snippet',
                         type: 'video',
                         q: query,
-                        maxResults: document.getElementById('maxResults')?.value || '25',
+                        maxResults: this.getMaxResults(),
                         key: this.apiKey
                     });
 
