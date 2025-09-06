@@ -2807,8 +2807,15 @@
                     this.keywords = [];
                 }
                 
+                console.log('키워드 시스템 요소들:', {
+                    keywordInput: this.keywordInput,
+                    addKeywordBtn: this.addKeywordBtn,
+                    keywordsDisplay: this.keywordsDisplay
+                });
+                
                 if (!this.keywordInput || !this.addKeywordBtn || !this.keywordsDisplay) {
                     console.warn('키워드 시스템 요소를 찾을 수 없습니다.');
+                    // 요소가 없어도 기본 기능은 동작하도록 함
                     return;
                 }
                 
@@ -3073,10 +3080,24 @@
             
             // 검색에 사용할 키워드 문자열 생성
             getSearchQuery() {
-                if (this.keywords.length === 0) {
+                // 키워드가 있으면 키워드 사용
+                if (this.keywords && this.keywords.length > 0) {
+                    return this.keywords.map(k => k.text).join(' ');
+                }
+                
+                // 키워드가 없으면 입력 필드에서 가져오기
+                if (this.keywordInput) {
                     return this.keywordInput.value.trim();
                 }
-                return this.keywords.map(k => k.text).join(' ');
+                
+                // 입력 필드도 없으면 직접 DOM에서 찾기
+                const inputElement = document.getElementById('searchQuery');
+                if (inputElement) {
+                    return inputElement.value.trim();
+                }
+                
+                console.warn('검색어를 가져올 수 없습니다');
+                return '';
             }
             
             // 알림 표시
