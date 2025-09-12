@@ -1,0 +1,14 @@
+# Netlify 리다이렉트 파일
+# SPA 및 정적 사이트 대응
+
+# 모든 요청을 index.html로 리다이렉트 (SPA 대응)
+/*    /index.html   200
+
+# 특정 파일 직접 서빙
+/*.js   /:splat   200
+/*.css  /:splat   200
+/*.html /:splat   200
+/*.png  /:splat   200
+/*.jpg  /:splat   200
+/*.gif  /:splat   200
+/*.ico  /:splat   200

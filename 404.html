@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - 페이지를 찾을 수 없습니다</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 50px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        h1 { font-size: 4rem; margin: 0; }
+        p { font-size: 1.2rem; margin: 20px 0; }
+        a { 
+            color: white; 
+            text-decoration: none; 
+            padding: 10px 20px; 
+            border: 2px solid white; 
+            border-radius: 5px; 
+            transition: all 0.3s;
+        }
+        a:hover { 
+            background: white; 
+            color: #667eea; 
+        }
+    </style>
+</head>
+<body>
+    <h1>404</h1>
+    <p>요청하신 페이지를 찾을 수 없습니다.</p>
+    <p>YouTube 프로 분석기 홈페이지로 이동합니다...</p>
+    <a href="/index.html">홈으로 가기</a>
+    
+    <script>
+        // 3초 후 자동으로 홈페이지로 리다이렉트
+        setTimeout(() => {
+            window.location.href = '/index.html';
+        }, 3000);
+    </script>
+</body>
+</html>
