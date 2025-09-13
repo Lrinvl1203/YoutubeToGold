@@ -4,6 +4,18 @@
   
   # 배포할 디렉토리 (루트 디렉토리)
   publish = "."
+  
+  # 기본 인덱스 파일 명시
+  [build.processing]
+    skip_processing = false
+  [build.processing.css]
+    bundle = true
+    minify = true
+  [build.processing.js]
+    bundle = true
+    minify = true
+  [build.processing.html]
+    pretty_urls = false
 
 [build.environment]
   # Node.js 버전 지정
