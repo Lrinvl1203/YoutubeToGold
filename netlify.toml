@@ -1,21 +1,13 @@
 [build]
   # 빌드 명령어 (정적 HTML이므로 빌드 불필요)
-  command = ""
+  command = "echo 'Static site deployment'"
   
   # 배포할 디렉토리 (루트 디렉토리)
   publish = "."
   
   # 기본 인덱스 파일 명시
   [build.processing]
-    skip_processing = false
-  [build.processing.css]
-    bundle = true
-    minify = true
-  [build.processing.js]
-    bundle = true
-    minify = true
-  [build.processing.html]
-    pretty_urls = false
+    skip_processing = true
 
 [build.environment]
   # Node.js 버전 지정

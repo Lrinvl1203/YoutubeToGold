@@ -11,7 +11,12 @@
       "mcp__playwright__browser_type",
       "mcp__playwright__browser_wait_for",
       "mcp__playwright__browser_evaluate",
-      "Read(P:\\0_지키기\\02_PROJECT\\99_Working/**)"
+      "Read(P:\\0_지키기\\02_PROJECT\\99_Working/**)",
+      "Bash(git remote add:*)",
+      "Bash(git push:*)",
+      "mcp__sequential-thinking__sequentialthinking",
+      "WebFetch(domain:youtubetogoldv1.netlify.app)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []
